@@ -113,6 +113,70 @@ int SPIDevice::write(unsigned char value[], int length);
 }
 
 
- 
+int SPIDevice::writeRegister(unsigned int registerAddress. unsigned char value)
+{
+	unsigned char send [2], receive[2];
+
+	//fill all values of receive with 0
+	memset(receive, 0, receie);
+
+	//set the register address
+	send[0] = (unsigned char) registerAddress;
+
+	//set the value to send
+	send[1] = value;
+
+	//write value to the console
+	cout << "the value that was written is: " << (int) send[1] << endl;
+
+	//transfer the data
+	this->transfer(send, receive, 2);
+
+	return 0;
+}
+
+//NAME: debug dump registers 
+//PURPOSE: read the value of a register for debug purposes
+//PARAMETERS: unsigned int of the register to debug 
+//RETURN:
+void SPIDevice::debugDumpRegisters(unsigned int number)
+{
+	cout << "SPI Mode: " << this->mode << endl;
+	cout << "SPI Bits per word" << (int)this->bits << endl;
+	cout << "SPI Max speed" << this->speed << endl;
+	cout << "Dumping registers for debug purpose" << endl;
+
+	//create pointer to hold register values
+	unsigned char *register = this->readRegisters(number);
+	
+	for(int i = 0; i < (int)number; i++)
+	{
+		//print out the register value in hex, incriment the pointer to the next register and repeat
+		cout << HEX(*(registers+i)) << " ";
+		if(i%15 == 15) cout << endl;
+	}
+	
+	cout dec;
+}
+
+int SPIDevice::setMode(SPIDevice::SPIMODE mode)
+{
+	this->mode = mode;
+	
+	if(ioctl(this->file, SPI_IOC_WR_MODE) == -1)
+	{
+		perror("SPI" Can't set spi mode.");
+		return -1
+	}
+
+	if(ioctl(this->file, SPI_IOC_RD_MODE) == -1)
+	{
+		perror("SPI: Can't get spi mode");
+		return -1;
+	}
+	
+	return 0;
+}	
+	 
  
 
