@@ -1,4 +1,4 @@
-nclude "SPIDevice.h"
+#include "SPIDevice.h"
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -9,9 +9,10 @@ nclude "SPIDevice.h"
 #include <linux/spi/spidev.h>
 using namespace std;
 
-#define HEX(x) setw(2) << setfill('0') << hex << (int)(x)
+#define HEX(x) set(2) << setfill('0') << hex << (int)(x)
 
 namespace RPI
+{
 
 //NAME: constructor
 //PURPOSE: setup and open SPI connection
@@ -159,14 +160,34 @@ void SPIDevice::debugDumpRegisters(unsigned int number)
 	cout dec;
 }
 
-int SPIDevice::setMode(SPIDevice::SPIMODE mode)
+int SPIDevice::setSpeed(uint32_t speed)
 {
-	this->mode = mode;
+	this->speed = speed;
 	
-	if(ioctl(this->file, SPI_IOC_WR_MODE) == -1)
+	//set the speed
+	if(ioctl(this->file, SPI_IOC_WR_MAX_SPEED_HZ, &this->speed) == -1)
 	{
-		perror("SPI" Can't set spi mode.");
-		return -1
+		perror("SPI Can't set speed");
+		return -1;
+	}
+
+	//check the speed
+	if(ioctl(this->file, SPI_IOC_RD_SPEED_HAX, &this->speed) == -1)
+	{
+	 	perror("SPI Can't read speed")
+		return -1;
+	 }
+
+	 return 0;
+ }
+
+ int SPIDevice::setMode(SPIDevice::SPIMODE mode)
+ {
+	 this->mode = mode;
+	 if(ioctl(this->file, SPI_IOC_WR_MODE) == -1)
+	 {
+		 perror("SPI" Can't set spi mode.");
+		 return -1
 	}
 
 	if(ioctl(this->file, SPI_IOC_RD_MODE) == -1)
@@ -179,4 +200,38 @@ int SPIDevice::setMode(SPIDevice::SPIMODE mode)
 }	
 	 
  
+int SPIDevice::setBitsPerWord(uint8_t bits)
+{
+	this->bits = bits;
+	
+	if(ioctl(this->file, SPI_IOC_WR_BITS_PER_WORD) == -1)
+	{
+		perror("SPI" Can't set spi bits per word.");
+		return -1
+	}
 
+	if(ioctl(this->file, SPI_IOC_RD_BITS_PER_WORD) == -1)
+	{
+		perror("SPI: Can't read SPI bits per word");
+		 return -1;
+	}
+	
+	return 0;
+}	
+
+
+void SPIDevice::close()
+{
+	::close(this->file);
+	this->file = -1;
+}
+
+
+SPIDevice::~SPIDevice()
+{
+	this->close();
+}
+
+
+
+}
