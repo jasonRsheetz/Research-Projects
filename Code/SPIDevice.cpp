@@ -5,13 +5,18 @@
 #include <cstring>
 #include <string>
 #include <unistd.h>
-#include <stdio.h> #include <stdlib.h> #include <getopt.h> #include <fcntl.h> #include <sys/ioctl.h> #include <linux/types.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <getopt.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <linux/types.h>
 #include <linux/spi/spidev.h>
 using namespace std;
 
 #define HEX(x) set(2) << setfill('0') << hex << (int)(x)
 
-namespace RPI
+namespace exploringRPI
 {
 
 //NAME: constructor

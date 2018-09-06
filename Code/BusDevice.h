@@ -1,7 +1,7 @@
 #ifndef BUSDEVICE_H_
 #define BUSCEVICE_H_
 
-namespace exploringtRPI
+namespace exploringRPI
 {
 
 class BusDevice 
@@ -15,10 +15,10 @@ protected:
 public:
 	BusDevice(unsigned int bus, unsigned int device);
 	virtual int open()=0;
-	virtual unsigned char readRegisters(unsigend int number, unsigned int fromAddress = 0)=0;
+	virtual unsigned char* readRegisters(unsigned int number, unsigned int fromAddress = 0)=0;
 	virtual int write(unsigned char value)=0;
 	virtual int writeRegister(unsigned int registerAddress, unsigned char value)=0;
-	virutal void debugDumpRegisters(unsigned int number = 0xff)=0;
+	virtual void debugDumpRegisters(unsigned int number = 0xff)=0;
 	virtual void close()=0;
 	virtual ~BusDevice();
 };
